@@ -51,7 +51,7 @@ print(all)
 library(ggplot2)
 # fitting a linear model with price as response
 #lm(log(FEV) ~ Age + Htcm + Gender + Smoke, data=lungcap)
-modelP = lm(price ~ carat, logcarat, as.factor(cut), as.factor(color), as.factor(clarity), depth, table, xx, yy, zz, data = dtrain)
+modelP = lm(price ~ carat+ logcarat+ as.factor(cut)+ as.factor(color)+ as.factor(clarity)+ depth+ table+ xx+ yy+ zz, data = dtrain)
   
 # Plotting residuals residuls vs fitted
 ggplot(modelP, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
@@ -69,7 +69,8 @@ ggplot(modelP, aes(sample = .stdresid)) +
        title = "Normal Q-Q", subtitle = deparse(modelP$call))
 
 #Fitting a linear model with logprice as response
-modelLP = lm(log(price) ~ carat, logcarat, as.factor(cut), as.factor(color), as.factor(clarity), depth, table, xx, yy, zz, data = dtrain)
+modelLP = lm(logprice ~ carat+ logcarat+ as.factor(cut)+ as.factor(color)+ as.factor(clarity)+ depth+ table+ xx+ yy+ zz, data = dtrain)
+  
   
 # Plotting residuals vs fitted
 ggplot(modelLP, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
@@ -88,20 +89,46 @@ ggplot(modelLP, aes(sample = .stdresid)) +
 
 
 library(GGally)
-ggpairs(dtrain,lower = list(combo = wrap(ggally_facethist, binwidth = 2)))
+#ggpairs(dtrain,lower = list(combo = wrap(ggally_facethist, binwidth = 2)))
+pairs(dtrain, cex = 0.05)
+#TODO: Plot kunne vært bedre
 
 ```
 
-pri = lm()
-
 Use the local regression model $\texttt{logprice} = \beta_0 + \beta_1 \texttt{carat}+ \beta_2 \texttt{carat}^2$ weighted by the tricube kernel $K_{i0}$. 
 
+Looking at the plots we prefer log(price) as our response variable [TODO:Explain why]. [TODO:Andreas, comment on the pairwise plot with the response.]
+
 **Q2:** What is the predicted price of a diamond weighting 1 carat. Use the closest 20% of the observations.  
+```{r}
+fitLocal = loess(log(price) ~ carat + logcarat, data = dtrain, span = .2) #Uncertain about this local regression
+'?'(loess)
+#TODO fix plotting
+plot(fitLocal, main = "Local Regression") 
+```
+
 **Q3:** What choice of $\beta_1$, $\beta_2$ and $K_{i0}$ would result in KNN-regression?  
 
-**Q4:** Describe how you can perform model selection in regression with AIC as criterion.  
+Choosing $\beta_1$, $\beta_2$ and $K_{i0}$ such that we minimize $\sum_{i=1}^{n} K_{i0}(y_{i}-\beta_{0}-\beta_{1}x_{i}-\beta_{2}x_{i}^{2})^{2}$ #TODO[ADD FROM AND TO TO THE SUM] would result in a KNN-regression, also called a local regression.
+```{r}
+summary(fitLocal)
+```
+
+
+**Q4:** Describe how you can perform model selection in regression with AIC as criterion. 
+
+We have that the $\text{AIC}= \frac{1}{\hat\sigma^2}(\text{RSS}+2d\hat\sigma^2)$. The AIC can be used to indirectly estimate the test error in a data poor situation. We can then select the model with the lowest AIC as our model, where AIC penalizes more complex models.
+
 **Q5:** What are the main differences between using AIC for model selection and using cross-validation (with mean squared test error MSE)?  
-**Q6:** See the code below for performing model selection with `bestglm()` based on AIC. What kind of contrast is used to represent `cut`, `color` and `clarity`? Write down the final best model and explain what you can interpret from the model.  
+
+Since AIC is an estimation of the test error, it is less accurate than CV which actually calculates the test error. However, CV requires us to split our data into a training set and a test, meaning that there is less data to train our model on. Both techniques make use of the RSS, as can be seen from the formula for $\text{MSE}=\frac{RSS}{n}$ and the formula for the AIC outlined above.
+
+**Q6:** See the code below for performing model selection with `bestglm()` based on AIC. What kind of contrast is used to represent `cut`, `color` and `clarity`? Write down the final best model and explain what you can interpret from the model. 
+
+
+
+
+
 **Q7:** Calculate and report the MSE of the test set using the best model (on the scale of `logprice`).  
 
 ```{r,eval=FALSE}
@@ -187,6 +214,7 @@ pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clusteri
 flying=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/flying.dd")
 ctrain=flying$ctrain
 ctest=flying$ctest
+pairs(ctrain, cex = 0.01)
 ```
 
 **Q28:** Start by getting to know the _training data_, by producing summaries and plots. Write a few sentences about what you observe and include your top 3 informative plots and/or outputs.
