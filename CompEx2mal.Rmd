@@ -121,9 +121,15 @@ We have that the $\text{AIC}= \frac{1}{\hat\sigma^2}(\text{RSS}+2d\hat\sigma^2)$
 
 **Q5:** What are the main differences between using AIC for model selection and using cross-validation (with mean squared test error MSE)?  
 
-Since AIC is an estimation of the test error, it is less accurate than CV which actually calculates the test error. However, CV requires us to split our data into a training set and a test, meaning that there is less data to train our model on. Both techniques make use of the RSS, as can be seen from the formula for $\text{MSE}=\frac{RSS}{n}$ and the formula for the AIC outlined above.
+Since AIC is an estimation of the test error, it is less accurate than CV which actually calculates the test error. However, CV requires us to split our data into a training set, a test, and a validation set, meaning that there is less data to train our model on. Additionally, CV makes fewer assumptions about the underlying model than the AIC, and can be used when the model's degrees of freedom are hard to ascertain.
 
 **Q6:** See the code below for performing model selection with `bestglm()` based on AIC. What kind of contrast is used to represent `cut`, `color` and `clarity`? Write down the final best model and explain what you can interpret from the model. 
+```{r}
+bestglm(Xy=ds, IC="AIC")
+```
+
+
+
 
 
 
@@ -144,7 +150,17 @@ summary(fit)
 ```
 
 **Q8:** Build a model matrix for the covariates `~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1`. What is the dimension of this matrix?  
+
+```{r}
+modelMatrix = 
+```
+
+
 **Q9:** Fit a lasso regression to the diamond data with `logprice` as the response and the model matrix given in Q8. How did you find the value to be used for the regularization parameter?  
+```{r}
+
+```
+
 **Q10:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
 
 **Q11:** A regression tree to model is built using a _greedy_ approach. What does that mean? Explain the strategy used for constructing a regression tree.  
