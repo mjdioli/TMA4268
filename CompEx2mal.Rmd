@@ -147,7 +147,22 @@ ds=as.data.frame(within(dtrain,{
   }))
 fit=bestglm(Xy=ds, IC="AIC")$BestModel
 summary(fit)
+
+dte=as.data.frame(within(dtest,{
+  y=logprice    # setting reponse
+  logprice=NULL # not include as covariate
+  price=NULL    # not include as covariate
+  carat=NULL    # not include as covariate
+  }))
+
+#Calculating MSE using the best model
+pred = predict.lm(fit, dte)
+
+mean((dte$y - pred)^2)
+
 ```
+Using the best model we get a test MSE of 0.003600305.
+
 
 **Q8:** Build a model matrix for the covariates `~logcarat+cut+clarity+color+depth+table+xx+yy+zz-1`. What is the dimension of this matrix?  
 
@@ -162,8 +177,14 @@ modelMatrix =
 ```
 
 **Q10:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
+```{r}
+
+```
 
 **Q11:** A regression tree to model is built using a _greedy_ approach. What does that mean? Explain the strategy used for constructing a regression tree.  
+A regression tree with recursive binary splitting (The one we were taught about in class and the one we will be describing here) divides the predictor space into two regions, $R_{1}$ and $R_{2}$, by making a decision rule for one of the predictors. Our goal is to find a predictor $x_{j}$ and a splitting point S such that $\sum_{i:x_{i}\in R_{1}(j,S)}(y_{i}-\hat y_{R_{1}})^2 + \sum_{i:x_{i}\in R_{2}(j,S)}(y_{i}-\hat y_{R_{2}})^2$ is minimized, where $\hat y_{R_{1}}$ and $\hat y_{R_{2}}$ are the mean responses for the training obsercations in $R_{1}(j,S)$ and $R_{2}(j,S)$ respectively. Our building method being greedy means that we at each stage only look at the optimal solution to the minimization problem for that instance and do not consider future instances.
+
+
 **Q12:** Is a regression tree a suitable method to handle both numerical and categorical covariates? Elaborate.  
 **Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on you findings.  
 **Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
