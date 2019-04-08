@@ -186,7 +186,10 @@ A regression tree with recursive binary splitting (The one we were taught about 
 
 
 **Q12:** Is a regression tree a suitable method to handle both numerical and categorical covariates? Elaborate.  
+Decision trees can handle both categorical and numerical variables with little difference in performance. Every split is based on a feature, and if the feature is categorical, the split is done with the elements belonging to a particular class. Regression trees themselves have some major disadvantages which makes them less useful than other competing methods. Chief among this is their poor predictive performance due to high variance and that they're not very robust, as small changes in the data can cause large changes in the final estimated tree. The main advantage of trees, which is more pronounced for small trees, is the ease with which humans can understand and interpret them.
+
 **Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on you findings.  
+
 **Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
 
 **Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping?  
