@@ -204,12 +204,24 @@ We see that the regression tree only makes use of the length and width in mm of 
 **Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`). 
 ```{r}
 library(caret)
-tree.pred = predict(tree.HIClass, headInjury2[test, ], type = "class")
-confusionMatrix(tree.pred, reference = headInjury2[test, ]$clinically.important.brain.injury)
+tree.pred = predict(tree, dtest)
+length(tree.pred)
+length(dtest$logprice)
+##TODO FIX CONFUSIOJN MATRIX
+confusionMatrix(table(tree.pred, dtest$logprice)) 
+confusionMatrix(tree.pred, reference = dtest$logprice)
 ```
 
 
-**Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping?  
+**Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping? 
+Bagging, also known as bootstrap aggregation, is a technique for dealing with the high variance of decision trees. Bagging is accomplished in the following manner:
+  - We use bootstrapping to construct k independent data sets from our original data set. 
+  - We then fit a decision tree to each data set.
+  - We take the average of our fitted trees as our bagged tree. For regression trees we take the average of all the predictions,
+    while for classification trees we record the class for a given observation for each of the k trees use the majority vote or       average posterior probabilities for each class as our final prediction.
+
+This works because the variance of the mean is reduced by the number of instances we average over.If there is a strong predictor in the data set then the decision trees produced by each of the bootstrap samples will look very similar to eachother. This is not optimal, as the k trees we get will be highly correlated, which means the variance of the bagged tree will be $\frac{1-(1-k)\rho}{k-1}\sigma^2$ where $\rho$ is the correlation between the trees. Random forest reduces the variance by reducing the correlation between the trees. The procedure is the same as in bagging but with the difference that at each split we are only allowed to consider $m<p$ of the predictors with a new sample of m predictors taken at each split.
+
 **Q16:** What are the parameter(s) to be set in random forest, and what are the rules for setting these?  
 **Q17:** Boosting is a popular method. What is the main difference between random forest and boosting?  
 **Q18:** Fit a random forest to the diamond data with `logprice` as the response (and the same covariates as before). Comment on your choice of parameter (as decribed in Q16).   
