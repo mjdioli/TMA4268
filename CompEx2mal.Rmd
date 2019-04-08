@@ -190,7 +190,24 @@ Decision trees can handle both categorical and numerical variables with little d
 
 **Q13:** Fit a (full) regression tree to the diamond data with `logprice` as the response (and the same covariates as for c and d), and plot the result. Comment briefly on you findings.  
 
-**Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`).  
+```{r}
+library(tree)
+
+tree = tree(logprice ~ logcarat+cut+clarity+color+depth+table+xx+yy+zz, dtrain)
+summary(tree)
+plot(tree, type = "proportional")
+text(tree, pretty = 1)
+```
+We see that the regression tree only makes use of the length and width in mm of the diamond (xx and yy). This might be because length and width are highly correlated with other parts of the data.
+
+
+**Q14:** Calculate and report the MSE of the test set (on the scale of `logprice`). 
+```{r}
+library(caret)
+tree.pred = predict(tree.HIClass, headInjury2[test, ], type = "class")
+confusionMatrix(tree.pred, reference = headInjury2[test, ]$clinically.important.brain.injury)
+```
+
 
 **Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping?  
 **Q16:** What are the parameter(s) to be set in random forest, and what are the rules for setting these?  
