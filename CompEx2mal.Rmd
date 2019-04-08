@@ -223,6 +223,9 @@ Bagging, also known as bootstrap aggregation, is a technique for dealing with th
 This works because the variance of the mean is reduced by the number of instances we average over.If there is a strong predictor in the data set then the decision trees produced by each of the bootstrap samples will look very similar to eachother. This is not optimal, as the k trees we get will be highly correlated, which means the variance of the bagged tree will be $\frac{1-(1-k)\rho}{k-1}\sigma^2$ where $\rho$ is the correlation between the trees. Random forest reduces the variance by reducing the correlation between the trees. The procedure is the same as in bagging but with the difference that at each split we are only allowed to consider $m<p$ of the predictors with a new sample of m predictors taken at each split.
 
 **Q16:** What are the parameter(s) to be set in random forest, and what are the rules for setting these?  
+
+The only tuning parameter we have is the number of predictors to consider at each split, m. The new sample of m preictors should be chosen to be small for highly correlated predictors p. Typically we have that $m\approx \sqrt{p} \text{ for classification and } m = \frac{p}{3}$ for regression.
+
 **Q17:** Boosting is a popular method. What is the main difference between random forest and boosting?  
 **Q18:** Fit a random forest to the diamond data with `logprice` as the response (and the same covariates as before). Comment on your choice of parameter (as decribed in Q16).   
 **Q19:** Make a variable importance plot and comment on the plot. Calculate and report the MSE of the test set (on the scale of `logprice`).  
