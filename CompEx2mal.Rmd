@@ -328,8 +328,11 @@ Both Euclidean distance and average linkage are measures of dissimilarity. Howev
 **Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?
 
 ```{r}
-
+hc.average=hclust(dist(Z), method="average")
+plot(hc.average, main="Average Linkage", xlab="", sub="", cex=.6)
 ```
+
+We can conclude that 'UNKNOWN' is in some way related to ovarian cancer, that K562 is highly related to leukemia (since it is both close in euclidean distance and the cluster K562 - Leukemia is close to Leukemia), and that MCF7 is related to breast cancer and slightly related to colon cancer.
 
 
 **Q27:**: Study the R-code and plot below. Here we have performed hierarchical clustering based on thefirst 64 principal component instead of the gene expression data in `Z`. What is the difference between using all the gene expression data and using the first 64 principal components in the clustering? We have plotted the dendrogram together with a heatmap of the data. Explain what is shown in the heatmap. What is given on the horizontal axis, vertical axis, value in the pixel grid?
