@@ -272,7 +272,10 @@ A principal component $q_{m}$ is defined as $q{m}=\sum_{m=1}^{M}\phi_{jm}Z_{j}$ 
 
 
 
-**Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?  
+**Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?
+
+
+
 
 **Q24**: Study the PC1 vs PC2 plot, and comment on the groupings observed. What can you say about the placement of the `K262`, `MCF7` and `UNKNOWN` samples? Produce the same plot for two other pairs of PCs and comment on your observations.
 
@@ -320,7 +323,41 @@ flying=dget("https://www.math.ntnu.no/emner/TMA4268/2019v/data/flying.dd")
 ctrain=flying$ctrain
 ctest=flying$ctest
 pairs(ctrain, cex = 0.01)
+print(flying)
+#Digesting data with pca, random forest feature importance, correlation plots, normality and residual plots:
+
+#Logistic regression techniques
+fit = glm(diabetes ~ ., family = "binomial", data = ctrain)
+summary(fit)
+  
+# Plotting residuals residuls vs fitted
+ggplot(modelP, aes(.fitted, .stdresid)) + geom_point(pch = 21) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(se = FALSE, col = "red", size = 0.5, method = "loess") +
+  labs(x = "Fitted values", y = "Standardized residuals",
+       title = "Fitted values vs. Standardized residuals",
+       subtitle = deparse(modelP$call))
+
+# qq-plot of residuals
+ggplot(modelP, aes(sample = .stdresid)) +
+  stat_qq(pch = 19) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dotted") +
+  labs(x = "Theoretical quantiles", y = "Standardized residuals", 
+       title = "Normal Q-Q", subtitle = deparse(modelP$call))
+
+#Random forest
+'?'(randomForest)
+rf_diabetes = randomForest(diabetes ~ ., ctrain, mtry = 3, ntree = 150, importance = TRUE)
+varImpPlot(rf_diabetes, pch = 20)
+
+#PCA
+
 ```
+
+Conclusion: We can conclude from our random forest and logistic regression that glu, ped, and bmi are the most important features.
+
+
+
 
 **Q28:** Start by getting to know the _training data_, by producing summaries and plots. Write a few sentences about what you observe and include your top 3 informative plots and/or outputs.
 
