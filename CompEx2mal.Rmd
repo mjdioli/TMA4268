@@ -205,13 +205,9 @@ We see that the regression tree only makes use of the length and width in mm of 
 ```{r}
 library(caret)
 tree.pred = predict(tree, dtest)
-length(tree.pred)
-length(dtest$logprice)
-##TODO FIX CONFUSIOJN MATRIX
-confusionMatrix(table(tree.pred, dtest$logprice)) 
-confusionMatrix(tree.pred, reference = dtest$logprice)
+mean((dte$y - tree.pred)^2)
 ```
-
+The MSE of the test set is 0.01715548
 
 **Q15:** Explain the motivation behind bagging, and how bagging differs from random forest? What is the role of bootstrapping? 
 Bagging, also known as bootstrap aggregation, is a technique for dealing with the high variance of decision trees. Bagging is accomplished in the following manner:
@@ -226,9 +222,40 @@ This works because the variance of the mean is reduced by the number of instance
 
 The only tuning parameter we have is the number of predictors to consider at each split, m. The new sample of m preictors should be chosen to be small for highly correlated predictors p. Typically we have that $m\approx \sqrt{p} \text{ for classification and } m = \frac{p}{3}$ for regression.
 
-**Q17:** Boosting is a popular method. What is the main difference between random forest and boosting?  
+**Q17:** Boosting is a popular method. What is the main difference between random forest and boosting? 
+#TODO: PRUNE THIS ANWSER AS IT IS OVER-DESCRIPTVE
+Boosting is done in the following manner:
+  - First build a decision tree with d splits.
+  - Fit a decision tree to the residuals of the model.
+  - Update the original tree with the residual tree multiplied with a weight.
+  - Repeat until a stopping criterion is reached.
+
+The main differences between boosting and random forest is that in random forest the decision trees are grown in paralell while in boosting they are grown sequentially.
+
+
 **Q18:** Fit a random forest to the diamond data with `logprice` as the response (and the same covariates as before). Comment on your choice of parameter (as decribed in Q16).   
+
+```{r}
+library(randomForest)
+rf = randomForest(logprice ~ logcarat+cut+clarity+color+depth+table+xx+yy+zz, dtrain, mtry = 3, ntree = 300, importance = TRUE)
+
+```
+
+We choose $m=3$ as the parameter for our random forrest since this is a regression model and $\frac{p}{3}=\frac{9}{3}=3$ according to the rule described in Q16.
+
 **Q19:** Make a variable importance plot and comment on the plot. Calculate and report the MSE of the test set (on the scale of `logprice`).  
+
+```{r}
+varImpPlot(rf, pch = 20)
+rf.pred = predict(rf, dtest)
+mean((dte$y - rf.pred)^2)
+
+```
+The fact that our variable importance plots disagree so clearly indicates that there are some highly correlated features in the data.
+
+
+The MSE of the test set is 0.002794626.
+
 
 **Q20:** Finally, compare the results from c (subset selection), d (lasso), e (tree) and f (random forest): Which method has given the best performance on the test set and which method has given you the best insight into the relationship between the price and the covariates?
 
