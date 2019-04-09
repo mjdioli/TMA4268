@@ -268,12 +268,27 @@ The MSE of the test set is 0.002794626.
 
 A principal component $q_{m}$ is defined as $q{m}=\sum_{m=1}^{M}\phi_{jm}Z_{j}$ where $\phi_{j}$ equals the column vector corresponding to the largest eigencalue of the covairance matrix ${\hat {\bf R}}$ of $Z$. Each entry in the principal component vector is a principal component score. PCA is sensitive to scales, so standardizing the data is necessary, which is why we use Z instead of X.
 
-**Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
+**Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores? 
+
+
+The design matrix X has dimension $64*6830$, meaning that it has only 64 eigenvectors. Since each principal component score is a linear combination of columns of X, and X has 64 columns, then there can only be 64 principal component scores.
 
 
 
 **Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?
-
+```{r}
+#Computes variance and plots proportion of variance explained by each principal component
+pr.var=pca$sdev^2
+pve=pr.var/sum(pr.var)
+plot(cumsum(pve), 
+     xlab="Principal Component", 
+     ylab="Cumulative Proportion of Variance Explained", 
+     ylim=c(0,1),
+     type='b')
+abline(h=0.8)
+abline(v=32)
+```
+32 principal components are needed to explain 80% of the total variance. sum(pca$ $sdev^2)=p because this sum gives the total variance of the data, which is also given by the trace of ${\hat {\bf R}}$. Since ${\hat {\bf R}}$ is a linear combination of the standardized matrix Z, it has only 1 on it's diagonal, and since ${\hat {\bf R}}$ is a square matrix, its trace is the sum of its diagonal elements, giving us p.
 
 
 
@@ -304,9 +319,18 @@ legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
 plot(1:dim(X)[2],pca$rotation[,1],type="l",xlab="genes",ylab="weight",main="First eigenvector")
 ```
 
+
+
 **Q25:**: Explain what it means to use Euclidean distance and average linkage for hierarchical clustering. 
+Both Euclidean distance and average linkage are measures of dissimilarity. However, Euclidean distance is only a measure of dissimilarity between pairs of observations, while average linkage is a measure of dissimilarity between pairs of groups of observations.
+
 
 **Q26:**: Perform hierarchical clustering with Euclidean distance and average linkage on the scaled gene expression in `Z`. Observe where our samples labelled as K562, MCF7 and `UNKNOWN` are placed in the dendrogram. Which conclusions can you draw from this?
+
+```{r}
+
+```
+
 
 **Q27:**: Study the R-code and plot below. Here we have performed hierarchical clustering based on thefirst 64 principal component instead of the gene expression data in `Z`. What is the difference between using all the gene expression data and using the first 64 principal components in the clustering? We have plotted the dendrogram together with a heatmap of the data. Explain what is shown in the heatmap. What is given on the horizontal axis, vertical axis, value in the pixel grid?
 
@@ -351,7 +375,12 @@ rf_diabetes = randomForest(diabetes ~ ., ctrain, mtry = 3, ntree = 150, importan
 varImpPlot(rf_diabetes, pch = 20)
 
 #PCA
+Q=scale(ctrain)
 
+pca_diabetes=prcomp(Q)
+plot(pca_diabetes$x[,1],pca_diabetes$x[,2],xlab="PC1",ylab="PC2",pch=pchsamples,col=colsamples)
+#TODO:FIX LEGEND
+legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
 ```
 
 Conclusion: We can conclude from our random forest and logistic regression that glu, ped, and bmi are the most important features.
