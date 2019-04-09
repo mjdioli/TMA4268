@@ -340,8 +340,14 @@ We can conclude that 'UNKNOWN' is in some way related to ovarian cancer, that K5
 ```{r}
 library(pheatmap)
 npcs=64 
+'?'(pheatmap)
 pheatmap(pca$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=5,fontsize_col=5)
 ```
+In the heatmap above, the horizontal axis gives the 64 principal components, the vertical axis gives the different cancer cells and their place in the dendrogram, and the value in the pixel grid gives... ##TODO FILL IN THIS
+
+
+
+
 
 # Problem 3: Flying solo with diabetes data [6 points]
 
@@ -384,6 +390,20 @@ pca_diabetes=prcomp(Q)
 plot(pca_diabetes$x[,1],pca_diabetes$x[,2],xlab="PC1",ylab="PC2",pch=pchsamples,col=colsamples)
 #TODO:FIX LEGEND
 legend("bottomright",legend = colsvsnames[,2],cex=0.55,col=cols,pch = pch.vec)
+
+pca.var=pca_diabetes$sdev^2
+pve_diabetes=pca.var/sum(pca.var)
+plot(cumsum(pve_diabetes), 
+     xlab="Principal Component", 
+     ylab="Cumulative Proportion of Variance Explained", 
+     ylim=c(0,1),
+     type='b')
+
+#Adding heatmaps and clustering
+npcs=8 
+'?'(pheatmap)
+pheatmap(pca_diabetes$x[,1:npcs],scale="none",cluster_col=FALSE,cluster_row=TRUE,clustering_distance_rows = "euclidean",clustering_method="average",fontsize_row=2,fontsize_col=10)
+#TODO Make heatmap more readable
 ```
 
 Conclusion: We can conclude from our random forest and logistic regression that glu, ped, and bmi are the most important features.
