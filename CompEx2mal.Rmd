@@ -260,11 +260,17 @@ The MSE of the test set is 0.002794626.
 **Q20:** Finally, compare the results from c (subset selection), d (lasso), e (tree) and f (random forest): Which method has given the best performance on the test set and which method has given you the best insight into the relationship between the price and the covariates?
 
 
+
 # Problem 2: Unsupervised learning [3 points]
 
 **Q21:** What is the definition of a principal component score, and how is the score related to the eigenvectors of the matrix ${\hat {\bf R}}$. 
 
+
+A principal component $q_{m}$ is defined as $q{m}=\sum_{m=1}^{M}\phi_{jm}Z_{j}$ where $\phi_{j}$ equals the column vector corresponding to the largest eigencalue of the covairance matrix ${\hat {\bf R}}$ of $Z$. Each entry in the principal component vector is a principal component score. PCA is sensitive to scales, so standardizing the data is necessary, which is why we use Z instead of X.
+
 **Q22:** Explain what is given in the plot with title "First eigenvector". Why are there only $n=64$ eigenvectors and $n=64$ principal component scores?
+
+
 
 **Q23:** How many principal components are needed to explain 80% of the total variance in ${\bf Z}$? Why is `sum(pca$sdev^2)=p`?  
 
